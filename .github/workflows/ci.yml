@@ -1,0 +1,45 @@
+# Confere todo pull request: o firmware compila para o ESP32 e o servidor do sensor instala e
+# não tem erro de sintaxe. O job se chama "ci", o mesmo nome usado no mobile-app.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Firmware compila para o ESP32
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: esp32:esp32:esp32
+          platforms: |
+            - name: esp32:esp32
+              source-url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          sketch-paths: |
+            - firmware/sima_sensor
+          enable-warnings-report: false
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: servidor-sensor/package-lock.json
+      - name: Servidor do sensor instala e não tem erro de sintaxe
+        working-directory: servidor-sensor
+        run: |
+          npm ci
+          node --check server.js
