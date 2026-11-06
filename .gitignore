@@ -1,0 +1,13 @@
+# PlatformIO / Arduino
+.pio/
+build/
+*.bin
+*.elf
+
+# Segredos: senha do Wi-Fi e chaves ficam fora do git
+secrets.h
+.env
+
+# Sistema
+.DS_Store
+.vscode/
