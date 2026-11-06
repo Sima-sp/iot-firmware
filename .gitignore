@@ -11,3 +11,4 @@ secrets.h
 # Sistema
 .DS_Store
 .vscode/
+node_modules/
